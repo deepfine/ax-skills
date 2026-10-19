@@ -8,6 +8,20 @@
 | 스킬 | 하는 일 | 이렇게 요청 |
 |---|---|---|
 | `notion-project-page` | 저장소 코드와 기획서를 읽어 Notion 프로젝트 페이지를 팀 공통 양식대로 작성·갱신 | "이 프로젝트 노션 정리해줘" |
+| `weekly-report` | Linear 이슈 변화와 Notion 회의록 결정을 모아 주간 보고 초안 작성 | "Unity팀 지난주 주간 보고 써줘" |
+| `release-notes` | Git 태그·커밋·PR과 Linear 이슈로 릴리즈 노트 작성 (내부용/고객용) | "v1.2 릴리즈 노트 써줘" |
+| `meeting-to-linear` | Notion 회의록의 후속 작업을 Linear 이슈로 만들고 회의록에 링크 연결 | "이 회의록 액션아이템 리니어로 옮겨줘" |
+
+### 필요한 연결
+
+| 스킬 | Notion MCP | Linear MCP | 저장소(git) |
+|---|---|---|---|
+| `notion-project-page` | 필수 | 선택 | 필수 |
+| `weekly-report` | 권장 | 필수 | — |
+| `release-notes` | 선택 | 권장 | 필수 |
+| `meeting-to-linear` | 필수 | 필수 | — |
+
+모든 스킬은 **미리보기를 보여주고 승인받은 뒤에만** Notion·Linear에 씁니다.
 
 ## 설치 (처음 한 번)
 
@@ -37,15 +51,21 @@ cd ~/ax-skills && git pull
 ~/ax-skills/install.sh --uninstall
 ```
 
-## 사전 준비: Notion MCP 연결
+## 사전 준비: Notion·Linear MCP 연결
 
-`notion-project-page`는 Notion MCP로 페이지를 읽고 씁니다. 연결이 없으면 Notion에는 쓰지 않고 Markdown 초안만 보여줍니다.
+| 서비스 | MCP 주소 |
+|---|---|
+| Notion | `https://mcp.notion.com/mcp` |
+| Linear | `https://mcp.linear.app/mcp` |
 
-- **Claude Code**: claude.ai 계정의 Notion 커넥터를 연결하거나, 터미널에서
-  `claude mcp add --transport http notion https://mcp.notion.com/mcp` 후 `/mcp`에서 로그인
-- **Codex**: `~/.codex/config.toml`에 Notion MCP 서버(`https://mcp.notion.com/mcp`)를 추가하고 로그인
+- **Claude Code**: claude.ai 계정의 커넥터를 연결하거나, 터미널에서
+  `claude mcp add --transport http notion https://mcp.notion.com/mcp`
+  `claude mcp add --transport http linear https://mcp.linear.app/mcp`
+  실행 후 `/mcp`에서 각각 로그인
+- **Codex**: `~/.codex/config.toml`에 위 두 MCP 서버를 추가하고 로그인
 
-Notion 접근은 **본인 권한**으로 이뤄집니다. 대상 팀스페이스에 편집 권한이 없으면 미리보기까지만 됩니다.
+연결이 없으면 스킬은 쓰기를 하지 않고 초안이나 후보 목록만 보여줍니다.
+Notion·Linear 접근은 **본인 권한**으로 이뤄집니다. 권한이 없는 팀스페이스·비공개 Linear 팀은 읽거나 쓸 수 없습니다.
 
 ## 사용 예: notion-project-page
 
