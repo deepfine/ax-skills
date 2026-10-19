@@ -12,7 +12,7 @@
 ## 설치 (처음 한 번)
 
 ```bash
-git clone git@github.com:deepfine/ax-skills.git ~/ax-skills
+git clone https://github.com/deepfine/ax-skills.git ~/ax-skills
 ~/ax-skills/install.sh
 ```
 
