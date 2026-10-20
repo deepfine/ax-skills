@@ -90,7 +90,7 @@ codex mcp list    # notion, linear의 Auth가 OAuth, Status가 enabled
 | `meeting-to-linear` | 회의록이 **회의록 DB에 행으로** 있고 `프로젝트` 관계가 지정됨. 그 프로젝트 행의 **`Linear` 속성에 Linear 프로젝트 URL**이 들어 있음 |
 | `plan-to-linear` | 상위 **이니셔티브**(예: SI)가 있음. 대상 팀이 `shared/linear-rules.md`의 **팀별 값 표**에 있음 (없으면 실행 중에 prefix·라벨을 물어봄). WBS에 단계·작업·완료일이 있음 |
 
-Unity팀 외의 팀은 아직 기준 DB가 스킬에 등록되어 있지 않습니다. 실행할 때 DB·템플릿 URL을 알려주거나, AX TF에 등록을 요청하세요.
+스킬에는 특정 팀의 Notion DB 주소가 들어 있지 않습니다. 실행하면 **어느 팀인지, 어느 DB·템플릿을 쓸지** 먼저 물어봅니다. URL을 바로 알려주면 질문이 줄고, 모르면 스킬이 Notion에서 찾아 후보를 보여줍니다. 팀 DB에 스킬이 쓰는 속성(예: `Git`, `Linear`, `프로젝트`)이 없으면 어느 속성으로 쓸지 물어봅니다.
 
 ### 5. 설치 확인
 
