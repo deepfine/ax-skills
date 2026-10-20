@@ -11,6 +11,7 @@
 | `weekly-report` | Linear 이슈 변화와 Notion 회의록 결정을 모아 주간 보고 초안 작성 | "Unity팀 지난주 주간 보고 써줘" |
 | `release-notes` | Git 태그·커밋·PR과 Linear 이슈로 릴리즈 노트 작성 (내부용/고객용) | "v1.2 릴리즈 노트 써줘" |
 | `meeting-to-linear` | Notion 회의록의 후속 작업을 Linear 이슈로 만들고 회의록에 링크 연결 | "이 회의록 액션아이템 리니어로 옮겨줘" |
+| `plan-to-linear` | 기획서·시나리오·WBS를 읽어 Linear 프로젝트·마일스톤·Epic·Task를 일괄 세팅 | "이 WBS로 리니어 프로젝트 세팅해줘" |
 
 ### 필요한 연결
 
@@ -20,6 +21,7 @@
 | `weekly-report` | 권장 | 필수 | — |
 | `release-notes` | 선택 | 권장 | 필수 |
 | `meeting-to-linear` | 필수 | 필수 | — |
+| `plan-to-linear` | 선택 | 필수 | — |
 
 모든 스킬은 **미리보기를 보여주고 승인받은 뒤에만** Notion·Linear에 씁니다.
 
@@ -84,14 +86,15 @@ codex mcp list    # notion, linear의 Auth가 OAuth, Status가 enabled
 |---|---|
 | `notion-project-page` | 프로젝트 DB에 해당 프로젝트 행이 있고 **`Git` 속성에 저장소 URL**이 들어 있음 (저장소와 페이지를 이 값으로 연결) |
 | `weekly-report` | 업무가 **Linear 이슈로 관리**되고 있고 상태값이 공통 6개(Backlog / Todo / In Progress / In Review / Done / Canceled)를 따름. 마감일이 있는 이슈는 마감일 입력 |
-| `release-notes` | 릴리즈마다 **git 태그**를 붙임. 브랜치명·PR 제목·커밋 메시지에 **Linear 이슈 ID**(예: `UNI-123`)를 넣음. 이슈 라벨로 `Feature`·`Bug`·`Improvement`(또는 `기능`·`버그`·`개선`)를 씀 |
+| `release-notes` | 릴리즈마다 **git 태그**를 붙임. 브랜치명·PR 제목·커밋 메시지에 **Linear 이슈 ID**(예: `UNI-123`)를 넣음. 커밋·PR 제목에 `feat`·`fix`·`perf` 같은 접두어를 씀 |
 | `meeting-to-linear` | 회의록이 **회의록 DB에 행으로** 있고 `프로젝트` 관계가 지정됨. 그 프로젝트 행의 **`Linear` 속성에 Linear 프로젝트 URL**이 들어 있음 |
+| `plan-to-linear` | 상위 **이니셔티브**(예: SI)가 있음. 대상 팀이 `shared/linear-rules.md`의 **팀별 값 표**에 있음 (없으면 실행 중에 prefix·라벨을 물어봄). WBS에 단계·작업·완료일이 있음 |
 
 Unity팀 외의 팀은 아직 기준 DB가 스킬에 등록되어 있지 않습니다. 실행할 때 DB·템플릿 URL을 알려주거나, AX TF에 등록을 요청하세요.
 
 ### 5. 설치 확인
 
-설치 후 Claude Code·Codex를 **새로 시작**하고 "사용 가능한 스킬 목록 보여줘"라고 물어봅니다. `notion-project-page`, `weekly-report`, `release-notes`, `meeting-to-linear`가 보이면 준비가 끝난 것입니다.
+설치 후 Claude Code·Codex를 **새로 시작**하고 "사용 가능한 스킬 목록 보여줘"라고 물어봅니다. `notion-project-page`, `weekly-report`, `release-notes`, `meeting-to-linear`, `plan-to-linear`가 보이면 준비가 끝난 것입니다.
 
 ## 설치 (처음 한 번)
 
@@ -140,3 +143,13 @@ cd ~/ax-skills && git pull
 - 스킬 수정은 **PR로만** 받습니다. 리뷰어는 AX TF입니다.
 - 새 팀에 적용할 때는 `skills/<스킬>/references/`에 팀별 조사 항목을 추가합니다.
 - 스킬 안에 비밀값, 개인 정보, 특정 개인 전용 경로를 넣지 않습니다.
+- Linear 작성 규칙은 `shared/linear-rules.md`가 원본입니다. 고친 뒤 `./scripts/sync-shared.sh`로 각 스킬에 복사하고, PR 전에 `./scripts/check-skills.sh`가 통과해야 합니다.
+- 새 팀이 Linear 스킬을 쓰려면 `shared/linear-rules.md`의 팀별 값 표(prefix, Epic을 둘 팀, `epic`·`task` 라벨 ID)에 행을 추가합니다.
+
+## Linear 구조 기준
+
+모든 Linear 스킬은 팀 Linear 가이드를 따릅니다. 요약:
+- **Initiative → Project → Epic → Task.** 모든 Task는 Epic 밑, 모든 이슈는 Project에 연결
+- **고객사 구분은 프로젝트 라벨**로 합니다: 이니셔티브 `SI` + 프로젝트 라벨 `제일기획` + 이름 `제일기획 - SIS AI Solution`
+- 이슈 라벨은 `epic`/`task`만, 제목은 `<<Epic>>` / `[Unity]` 같은 팀 prefix
+- 기준 예시: Linear의 **제일기획 - SIS AI Solution** 프로젝트
