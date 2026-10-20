@@ -7,7 +7,7 @@
 
 | 스킬 | 하는 일 | 이렇게 요청 |
 |---|---|---|
-| `notion-project-page` | 저장소 코드와 기획서를 읽어 Notion 프로젝트 페이지를 팀 공통 양식대로 작성·갱신 | "이 프로젝트 노션 정리해줘" |
+| `notion-project-page` | 기획서·WBS(와 저장소 코드)를 읽어 Notion 프로젝트 페이지를 팀 공통 양식대로 작성·갱신 | "이 프로젝트 노션 정리해줘" |
 | `weekly-report` | Linear 이슈 변화와 Notion 회의록 결정을 모아 주간 보고 초안 작성 | "Unity팀 지난주 주간 보고 써줘" |
 | `release-notes` | Git 태그·커밋·PR과 Linear 이슈로 릴리즈 노트 작성 (내부용/고객용) | "v1.2 릴리즈 노트 써줘" |
 | `meeting-to-linear` | Notion 회의록의 후속 작업을 Linear 이슈로 만들고 회의록에 링크 연결 | "이 회의록 액션아이템 리니어로 옮겨줘" |
@@ -17,7 +17,7 @@
 
 | 스킬 | Notion MCP | Linear MCP | 저장소(git) |
 |---|---|---|---|
-| `notion-project-page` | 필수 | 선택 | 필수 |
+| `notion-project-page` | 필수 | 선택 | 선택 (있으면 코드에서 기술 정보까지 채움) |
 | `weekly-report` | 권장 | 필수 | — |
 | `release-notes` | 선택 | 권장 | 필수 |
 | `meeting-to-linear` | 필수 | 필수 | — |
@@ -44,7 +44,7 @@ Notion·Linear는 **본인 권한**으로 접근합니다. 스킬이 권한을 �
 | 프로그램 | 용도 | 확인 명령 |
 |---|---|---|
 | Claude Code 또는 Codex | 스킬 실행 | `claude --version` / `codex --version` |
-| git | 설치·업데이트, 저장소 분석 | `git --version` |
+| git | ax-skills **설치·업데이트**(`git clone`·`git pull`). 스킬 실행에는 `release-notes`, 저장소가 있는 `notion-project-page`에만 필요 | `git --version` |
 | GitHub CLI `gh` (선택) | `release-notes`가 병합된 PR 정보를 가져올 때 | `gh auth status` |
 
 ### 3. MCP 연결 (Notion·Linear)
@@ -84,7 +84,7 @@ codex mcp list    # notion, linear의 Auth가 OAuth, Status가 enabled
 
 | 스킬 | 미리 갖춰야 할 것 |
 |---|---|
-| `notion-project-page` | 프로젝트 DB에 해당 프로젝트 행이 있고 **`Git` 속성에 저장소 URL**이 들어 있음 (저장소와 페이지를 이 값으로 연결) |
+| `notion-project-page` | 프로젝트 DB에 해당 프로젝트 행이 있음. 저장소가 있으면 **`Git` 속성에 저장소 URL**을 넣어 두면 자동으로 찾음 (없으면 프로젝트명으로 찾음) |
 | `weekly-report` | 업무가 **Linear 이슈로 관리**되고 있고 상태값이 공통 6개(Backlog / Todo / In Progress / In Review / Done / Canceled)를 따름. 마감일이 있는 이슈는 마감일 입력 |
 | `release-notes` | 릴리즈마다 **git 태그**를 붙임. 브랜치명·PR 제목·커밋 메시지에 **Linear 이슈 ID**(예: `UNI-123`)를 넣음. 커밋·PR 제목에 `feat`·`fix`·`perf` 같은 접두어를 씀 |
 | `meeting-to-linear` | 회의록이 **회의록 DB에 행으로** 있고 `프로젝트` 관계가 지정됨. 그 프로젝트 행의 **`Linear` 속성에 Linear 프로젝트 URL**이 들어 있음 |
@@ -131,7 +131,7 @@ cd ~/ax-skills && git pull
 | 언제 | 스킬 | 결과 |
 |---|---|---|
 | ① 프로젝트 착수 | `plan-to-linear` | WBS → Linear 프로젝트·마일스톤·Epic·Task |
-| ② 저장소가 생기면 | `notion-project-page` | 코드·기획서·WBS → Notion 프로젝트 페이지 |
+| ② 착수 직후 (저장소가 생기면 한 번 더) | `notion-project-page` | 기획서·WBS(+코드) → Notion 프로젝트 페이지 |
 | ③ 회의가 끝날 때마다 | `meeting-to-linear` | 회의록 후속 작업 → Linear Task |
 | ④ 매주 | `weekly-report` | Linear 변화 + 회의 결정 → 주간 보고 |
 | ⑤ 배포할 때 | `release-notes` | 커밋·PR·이슈 → 릴리즈 노트 |
@@ -202,13 +202,14 @@ M5부터 Task 담당자는 홍길동으로 바꿔줘.
 
 ### ② notion-project-page: Notion 프로젝트 페이지
 
-대상 저장소 폴더에서 Claude Code·Codex를 열고 요청합니다.
+아무 폴더에서나 요청하면 됩니다. 저장소가 있는 프로젝트는 **저장소 폴더에서** 열면 코드에서 엔진 버전·개발 환경 같은 기술 정보까지 채웁니다.
 ```text
-이 프로젝트 노션 정리해줘.
+제일기획 SIS 프로젝트 노션 정리해줘.
 기획서는 ~/Downloads/SIS솔루션시나리오_수정.pptx, 일정은 ~/Downloads/GDS3.0_Integrated_AX_Solution_WBS_0812.xlsx 'SIS WBS' 탭이야.
 Linear는 '제일기획 - SIS AI Solution' 프로젝트야.
 ```
-- 프로젝트 DB의 `Git` 속성으로 페이지를 찾습니다. 없으면 프로젝트명을 묻고, 새 행을 만들지 확인합니다.
+- 저장소가 있으면 `Git` 속성으로, 없으면 프로젝트명·Linear URL로 페이지를 찾습니다. 그래도 없으면 새 행을 만들지 확인합니다.
+- 저장소가 없으면 기술 검토·개발 환경 칸은 `확인 필요`로 남습니다. 저장소가 생긴 뒤 저장소 폴더에서 다시 실행하면 그 칸만 채웁니다.
 - 기능 표의 "관련 Linear 이슈"에는 Epic ID가 들어갑니다. 진행 상태는 쓰지 않고 Linear 링크로 대신합니다.
 - 근거 없는 담당자·일정·진척은 쓰지 않고, `.env`·키·계정 정보는 옮기지 않습니다. 양식의 원본은 Notion의 **프로젝트 시작 템플릿** 페이지입니다.
 
